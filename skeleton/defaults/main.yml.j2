@@ -1,0 +1,45 @@
+---
+# =============================================================================
+# {{ role_name }} - Default Variables
+# =============================================================================
+# Role: marcstraube.{{ collection_name | default('TODO') }}.{{ role_name }}
+# Description: {{ description }}
+# =============================================================================
+
+# =============================================================================
+# SERVICE CONTROL
+# =============================================================================
+
+# Enable or disable the entire role
+{{ role_name }}_enabled: true
+
+# =============================================================================
+# TODO: ROLE-SPECIFIC SETTINGS
+# =============================================================================
+
+# TODO: Add role-specific variables here
+
+# =============================================================================
+# FIREWALL
+# =============================================================================
+
+# Enable firewalld integration
+{{ role_name }}_firewalld_enabled: false
+
+# Firewalld zone for service rules
+{{ role_name }}_firewalld_zone: 'public'
+
+# =============================================================================
+# APPARMOR
+# =============================================================================
+
+# Enable AppArmor profile enforcement (Arch/Debian only, not RHEL/Rocky)
+{{ role_name }}_apparmor_enabled: false
+
+# =============================================================================
+# BTRFS
+# =============================================================================
+
+# Enable BTRFS NoCOW optimization for write-heavy directory
+# Auto-detected: only applies on BTRFS filesystems
+{{ role_name }}_btrfs_nocow: true

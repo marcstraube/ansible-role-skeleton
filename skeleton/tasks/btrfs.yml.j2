@@ -1,0 +1,22 @@
+---
+# =============================================================================
+# {{ role_name }} - BTRFS NoCOW Tasks
+# =============================================================================
+# Pattern: Check if target directory lives on BTRFS, then set NoCOW attribute.
+# For roles with complex BTRFS needs (subvolume creation, multiple dirs),
+# extend this file — see fail2ban or auditd roles for examples.
+
+- name: BTRFS | Check directory filesystem type
+  ansible.builtin.command:
+    cmd: stat -f -c %T {{ '{{' }} __{{ role_name }}_data_dir | dirname {{ '}}' }}
+  register: __{{ role_name }}_fstype
+  changed_when: false
+  failed_when: false
+
+- name: BTRFS | Set NoCOW attribute on data directory
+  ansible.builtin.command:
+    cmd: chattr +C {{ '{{' }} __{{ role_name }}_data_dir {{ '}}' }}
+  when:
+    - {{ role_name }}_btrfs_nocow | bool
+    - __{{ role_name }}_fstype.stdout | default('') == 'btrfs'
+  changed_when: false

@@ -1,0 +1,18 @@
+---
+# =============================================================================
+# {{ role_name }} - Handlers
+# =============================================================================
+
+- name: Restart {{ role_name }}
+  ansible.builtin.systemd:
+    name: '{{ '{{' }} __{{ role_name }}_service_name {{ '}}' }}'
+    state: restarted
+  failed_when: false
+  when: {{ role_name }}_enabled | bool
+
+- name: Reload {{ role_name }}
+  ansible.builtin.systemd:
+    name: '{{ '{{' }} __{{ role_name }}_service_name {{ '}}' }}'
+    state: reloaded
+  failed_when: false
+  when: {{ role_name }}_enabled | bool

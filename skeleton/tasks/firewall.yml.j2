@@ -1,0 +1,14 @@
+---
+# =============================================================================
+# {{ role_name }} - Firewall Tasks
+# =============================================================================
+
+# TODO: Set the correct service name below
+
+- name: Firewall | Allow {{ role_name }} service
+  ansible.posix.firewalld:
+    service: TODO
+    zone: '{{ '{{' }} {{ role_name }}_firewalld_zone {{ '}}' }}'
+    permanent: true
+    immediate: true
+    state: enabled

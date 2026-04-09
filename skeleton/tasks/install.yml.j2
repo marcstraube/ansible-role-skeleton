@@ -1,0 +1,9 @@
+---
+# =============================================================================
+# {{ role_name }} - Installation Tasks
+# =============================================================================
+
+- name: Install | {{ role_name }} packages
+  ansible.builtin.package:
+    name: '{{ '{{' }} __{{ role_name }}_packages {{ '}}' }}'
+    state: present

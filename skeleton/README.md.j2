@@ -1,0 +1,90 @@
+# marcstraube.{{ collection_name | default('TODO') }}.{{ role_name }}
+
+{{ description }}
+
+## Description
+
+TODO: 2-4 sentences describing what the role does, key features, and multi-OS support.
+
+## Requirements
+
+- ansible-core >= 2.17
+- Collections: TODO (or "No additional collections required")
+
+## Supported Platforms
+
+| Platform | Version | Notes |
+| -------------- | ------- | ----- |
+| Arch Linux | latest | |
+| Debian Trixie | 13 | |
+| Rocky Linux 9 | 9 | |
+| Rocky Linux 10 | 10 | |
+
+## Role Variables
+
+### Service Control
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `{{ role_name }}_enabled` | `true` | Enable/disable the entire role |
+
+### Firewall
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `{{ role_name }}_firewalld_enabled` | `false` | Enable firewalld integration |
+| `{{ role_name }}_firewalld_zone` | `'public'` | Firewalld zone for service rules |
+
+### AppArmor
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `{{ role_name }}_apparmor_enabled` | `false` | Enable AppArmor profile enforcement |
+
+### BTRFS
+
+| Variable | Default | Description |
+| -------- | ------- | ----------- |
+| `{{ role_name }}_btrfs_nocow` | `true` | Enable BTRFS NoCOW optimization |
+
+## Tags
+
+| Tag | Scope |
+| --- | ----- |
+| `{{ role_name }}` | All role tasks |
+| `{{ role_name }}:install` | Package installation |
+| `{{ role_name }}:configure` | Configuration |
+| `{{ role_name }}:service` | Service management |
+| `{{ role_name }}:firewall` | Firewall integration |
+| `{{ role_name }}:apparmor` | AppArmor enforcement |
+
+## Example Playbook
+
+```yaml
+- name: Configure {{ role_name }}
+  hosts: all
+  become: true
+  tasks:
+    - name: Include {{ role_name }} role
+      ansible.builtin.include_role:
+        name: marcstraube.{{ collection_name | default('TODO') }}.{{ role_name }}
+      tags: [{{ role_name }}]
+      when: {{ role_name }}_enabled | default(true) | bool
+```
+
+## Testing
+
+```bash
+cd roles/{{ role_name }}
+molecule test
+```
+
+Driver: `podman` | Platforms: Arch Linux, Debian Trixie, Rocky 9, Rocky 10
+
+## License
+
+MIT
+
+## Author
+
+Marc Straube
