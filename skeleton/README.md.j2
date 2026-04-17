@@ -13,20 +13,25 @@ TODO: 2-4 sentences describing what the role does, key features, and multi-OS su
 
 ## Supported Platforms
 
-| Platform | Version | Notes |
-| -------------- | ------- | ----- |
-| Arch Linux | latest | |
-| Debian Trixie | 13 | |
-| Rocky Linux 9 | 9 | |
-| Rocky Linux 10 | 10 | |
+| Platform                   | Notes |
+|----------------------------|-------|
+| Arch Linux                 |       |
+| Debian Trixie              |       |
+| EL 9 (Rocky, Alma, RHEL)  |       |
+| EL 10 (Rocky, Alma, RHEL) |       |
+
+Other distributions in the same os_family (EndeavourOS, Manjaro, Ubuntu, Mint,
+Fedora) should work but are not actively tested. Use distro-specific vars
+overrides if needed.
 
 ## Role Variables
 
-### Service Control
+### Role Control
 
 | Variable | Default | Description |
 | -------- | ------- | ----------- |
-| `{{ role_name }}_enabled` | `true` | Enable/disable the entire role |
+| `{{ role_name }}_enabled` | `true` | Enable the {{ role_name }} role |
+| `{{ role_name }}_service_enabled` | `true` | Enable and start the {{ role_name }} service |
 
 ### Firewall
 
@@ -40,12 +45,6 @@ TODO: 2-4 sentences describing what the role does, key features, and multi-OS su
 | Variable | Default | Description |
 | -------- | ------- | ----------- |
 | `{{ role_name }}_apparmor_enabled` | `false` | Enable AppArmor profile enforcement |
-
-### BTRFS
-
-| Variable | Default | Description |
-| -------- | ------- | ----------- |
-| `{{ role_name }}_btrfs_nocow` | `true` | Enable BTRFS NoCOW optimization |
 
 ## Tags
 
@@ -61,15 +60,11 @@ TODO: 2-4 sentences describing what the role does, key features, and multi-OS su
 ## Example Playbook
 
 ```yaml
-- name: Configure {{ role_name }}
-  hosts: all
-  become: true
-  tasks:
-    - name: Include {{ role_name }} role
-      ansible.builtin.include_role:
-        name: marcstraube.{{ collection_name | default('TODO') }}.{{ role_name }}
-      tags: [{{ role_name }}]
-      when: {{ role_name }}_enabled | default(true) | bool
+- name: Include {{ role_name }} role
+  ansible.builtin.include_role:
+    name: marcstraube.{{ collection_name | default('TODO') }}.{{ role_name }}
+  tags: [{{ role_name }}]
+  when: {{ role_name }}_enabled | default(true) | bool
 ```
 
 ## Testing
@@ -80,6 +75,15 @@ molecule test
 ```
 
 Driver: `podman` | Platforms: Arch Linux, Debian Trixie, Rocky 9, Rocky 10
+
+## Notes
+
+TODO: Add any special notes, caveats, or known limitations (remove section if not needed).
+
+## References
+
+- TODO: [Official Documentation](https://example.com)
+- TODO: [GitHub Repository](https://github.com/example/project)
 
 ## License
 

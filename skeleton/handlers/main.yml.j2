@@ -1,18 +1,20 @@
 ---
-# =============================================================================
-# {{ role_name }} - Handlers
-# =============================================================================
+# Handler names use the software/service display name, not the Ansible role_name.
+# Adjust the display name below if it differs from role_name (e.g., NetworkManager, ClamAV).
+- name: Reload {{ role_name }} systemd units
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  failed_when: false
+  when: {{ role_name }}_enabled | bool
 
 - name: Restart {{ role_name }}
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: '{{ '{{' }} __{{ role_name }}_service_name {{ '}}' }}'
     state: restarted
-  failed_when: false
-  when: {{ role_name }}_enabled | bool
+  when: {{ role_name }}_service_enabled | bool
 
 - name: Reload {{ role_name }}
-  ansible.builtin.systemd:
+  ansible.builtin.systemd_service:
     name: '{{ '{{' }} __{{ role_name }}_service_name {{ '}}' }}'
     state: reloaded
-  failed_when: false
-  when: {{ role_name }}_enabled | bool
+  when: {{ role_name }}_service_enabled | bool

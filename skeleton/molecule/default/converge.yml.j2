@@ -1,13 +1,12 @@
 ---
 - name: Converge
   hosts: all
-  become: true
   gather_facts: true
 
   vars:
     {{ role_name }}_enabled: true
 
   tasks:
-    - name: Include {{ role_name }} role  # noqa: role-name[path]
+    - name: Converge | Include {{ role_name }} role  # noqa: role-name[path]
       ansible.builtin.include_role:
         name: '{{ '{{' }} playbook_dir {{ '}}' }}/../..'

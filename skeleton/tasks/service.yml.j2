@@ -1,18 +1,7 @@
 ---
-# =============================================================================
-# {{ role_name }} - Service Tasks
-# =============================================================================
-
-- name: Service | Enable and start {{ role_name }}
-  ansible.builtin.systemd:
+- name: Service | Manage {{ role_name }} service
+  ansible.builtin.systemd_service:
     name: '{{ '{{' }} __{{ role_name }}_service_name {{ '}}' }}'
-    enabled: true
-    state: started
-  when: {{ role_name }}_enabled | bool
-
-- name: Service | Stop and disable {{ role_name }}
-  ansible.builtin.systemd:
-    name: '{{ '{{' }} __{{ role_name }}_service_name {{ '}}' }}'
-    enabled: false
-    state: stopped
-  when: not ({{ role_name }}_enabled | bool)
+    enabled: "{{ '{{' }} {{ role_name }}_service_enabled | bool {{ '}}' }}"
+    state: "{{ '{{' }} {{ role_name }}_service_enabled | bool | ternary('started', 'stopped') {{ '}}' }}"
+    daemon_reload: true

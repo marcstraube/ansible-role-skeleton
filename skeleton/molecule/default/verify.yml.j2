@@ -1,26 +1,28 @@
 ---
 - name: Verify
   hosts: all
-  become: true
   gather_facts: true
 
   tasks:
-    # ==========================================================================
-    # LOAD OS-SPECIFIC VARIABLES
-    # ==========================================================================
+    #
+    # Load OS-Specific Variables
+    #
+
     - name: Verify | Load OS-specific variables
       ansible.builtin.include_vars: '{{ '{{' }} item {{ '}}' }}'
       with_first_found:
         - files:
             - '{{ '{{' }} ansible_facts["distribution"] {{ '}}' }}-{{ '{{' }} ansible_facts["distribution_major_version"] {{ '}}' }}.yml'
+            - '{{ '{{' }} ansible_facts["os_family"] {{ '}}' }}-{{ '{{' }} ansible_facts["distribution_major_version"] {{ '}}' }}.yml'
             - '{{ '{{' }} ansible_facts["distribution"] {{ '}}' }}.yml'
             - '{{ '{{' }} ansible_facts["os_family"] {{ '}}' }}.yml'
           paths:
             - '../../vars'
 
-    # ==========================================================================
-    # PACKAGE VERIFICATION
-    # ==========================================================================
+    #
+    # Package Verification
+    #
+
     - name: Verify | Check {{ role_name }} package is installed
       ansible.builtin.package:
         name: TODO
@@ -29,19 +31,25 @@
       register: __{{ role_name }}_pkg_check
       failed_when: __{{ role_name }}_pkg_check.changed
 
-    # ==========================================================================
-    # SERVICE VERIFICATION
-    # ==========================================================================
-    - name: Verify | Check {{ role_name }} service is enabled and running
-      ansible.builtin.systemd:
-        name: '{{ '{{' }} __{{ role_name }}_service_name {{ '}}' }}'
-        enabled: true
-        state: started
-      check_mode: true
-      register: __{{ role_name }}_svc_check
-      failed_when: __{{ role_name }}_svc_check.changed
+    #
+    # Service Verification
+    #
 
-    # ==========================================================================
-    # CONFIGURATION VERIFICATION
-    # ==========================================================================
+    - name: Verify | Check {{ role_name }} service is enabled and running
+      ansible.builtin.systemd_service:
+        name: '{{ '{{' }} __{{ role_name }}_service_name {{ '}}' }}'
+      register: __{{ role_name }}_svc_check
+
+    - name: Verify | Assert {{ role_name }} service is active
+      ansible.builtin.assert:
+        that:
+          - __{{ role_name }}_svc_check.status.ActiveState == 'active'
+          - __{{ role_name }}_svc_check.status.UnitFileState == 'enabled'
+        fail_msg: "{{ role_name }} service is not active or enabled"
+        success_msg: "{{ role_name }} service is active and enabled"
+
+    #
+    # Configuration Verification
+    #
+
     # TODO: Add role-specific verification tasks

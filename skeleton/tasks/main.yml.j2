@@ -1,58 +1,75 @@
 ---
-# =============================================================================
-# {{ role_name }} - Main Tasks
-# =============================================================================
-
 - name: Main | Load OS-specific variables
   ansible.builtin.include_vars: '{{ '{{' }} item {{ '}}' }}'
   with_first_found:
     - files:
         - '{{ '{{' }} ansible_facts["distribution"] {{ '}}' }}-{{ '{{' }} ansible_facts["distribution_major_version"] {{ '}}' }}.yml'
+        - '{{ '{{' }} ansible_facts["os_family"] {{ '}}' }}-{{ '{{' }} ansible_facts["distribution_major_version"] {{ '}}' }}.yml'
         - '{{ '{{' }} ansible_facts["distribution"] {{ '}}' }}.yml'
         - '{{ '{{' }} ansible_facts["os_family"] {{ '}}' }}.yml'
       paths:
         - 'vars'
-  tags: [{{ role_name }}]
+  tags:
+    - {{ role_name }}
 
 - name: Main | Import install tasks
   ansible.builtin.import_tasks: install.yml
-  tags: [{{ role_name }}, {{ role_name }}:install]
+  when: {{ role_name }}_enabled | bool
+  tags:
+    - {{ role_name }}
+    - {{ role_name }}:install
 
 - name: Main | Include BTRFS tasks
   ansible.builtin.include_tasks:
     file: btrfs.yml
     apply:
-      tags: [{{ role_name }}, {{ role_name }}:configure]
-  when:
-    - {{ role_name }}_enabled | bool
-    - {{ role_name }}_btrfs_nocow | bool
-  tags: [{{ role_name }}, {{ role_name }}:configure]
+      tags:
+        - {{ role_name }}
+        - {{ role_name }}:install
+  when: {{ role_name }}_enabled | bool
+  tags:
+    - {{ role_name }}
+    - {{ role_name }}:install
 
 - name: Main | Import configure tasks
   ansible.builtin.import_tasks: configure.yml
-  tags: [{{ role_name }}, {{ role_name }}:configure]
+  when: {{ role_name }}_enabled | bool
+  tags:
+    - {{ role_name }}
+    - {{ role_name }}:configure
+
+- name: Main | Import service tasks
+  ansible.builtin.import_tasks: service.yml
+  when: {{ role_name }}_enabled | bool
+  tags:
+    - {{ role_name }}
+    - {{ role_name }}:service
 
 - name: Main | Include firewall tasks
   ansible.builtin.include_tasks:
     file: firewall.yml
     apply:
-      tags: [{{ role_name }}, {{ role_name }}:firewall]
+      tags:
+        - {{ role_name }}
+        - {{ role_name }}:firewall
   when:
     - {{ role_name }}_enabled | bool
     - {{ role_name }}_firewalld_enabled | bool
-  tags: [{{ role_name }}, {{ role_name }}:firewall]
+  tags:
+    - {{ role_name }}
+    - {{ role_name }}:firewall
 
 - name: Main | Include AppArmor tasks
   ansible.builtin.include_tasks:
     file: apparmor.yml
     apply:
-      tags: [{{ role_name }}, {{ role_name }}:apparmor]
+      tags:
+        - {{ role_name }}
+        - {{ role_name }}:apparmor
   when:
     - {{ role_name }}_enabled | bool
     - {{ role_name }}_apparmor_enabled | bool
     - ansible_facts['os_family'] != 'RedHat'
-  tags: [{{ role_name }}, {{ role_name }}:apparmor]
-
-- name: Main | Import service tasks
-  ansible.builtin.import_tasks: service.yml
-  tags: [{{ role_name }}, {{ role_name }}:service]
+  tags:
+    - {{ role_name }}
+    - {{ role_name }}:apparmor
